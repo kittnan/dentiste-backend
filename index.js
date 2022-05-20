@@ -7,7 +7,8 @@ require("dotenv").config();
 const app = express();
 
 // ! routes
-// const blogRoute = require("./routes/blog");
+const customers = require("./routes/customers");
+const members = require("./routes/members");
 
 
 // ! connect cloud database
@@ -23,9 +24,12 @@ mongoose
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+var router = express.Router();
+
 
 // ! route
-// app.use("/api", blogRoute);
+app.use("/customers", customers);
+app.use("/members", members);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`start server in port ${port}`));
