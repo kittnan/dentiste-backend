@@ -3,6 +3,20 @@ const Router = express.Router();
 
 let Member = require("../schema/member");
 
+Router.get("/last", (req, res, next) => {
+  Member.aggregate([
+    {
+      $match: {},
+    },
+  ])
+    .sort({ memberId: -1 })
+    .limit(1)
+    .exec((err, result) => {
+      if (err) res.json(err);
+      res.json(result);
+    });
+});
+
 Router.get("/", (req, res, next) => {
   Member.find({}).exec((err, rs) => {
     if (err) {
@@ -15,6 +29,24 @@ Router.get("/", (req, res, next) => {
 
 Router.post("/add", (req, res, next) => {
   Member.insertMany(req.body, (err, rs) => {
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(rs);
+    }
+  });
+});
+
+Router.post("/login", (req, res, next) => {
+  const con = [
+    {
+      $match: {
+        username: req.body.username,
+        password: req.body.password,
+      },
+    },
+  ];
+  Member.aggregate(con, (err, rs) => {
     if (err) {
       res.json(err);
     } else {
