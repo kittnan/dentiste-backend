@@ -3,14 +3,34 @@ const Router = express.Router();
 
 let Customers = require("../schema/customers");
 
+Router.get("/last", (req, res, next) => {
+  Customers.aggregate([
+    {
+      $match: {},
+    },
+  ])
+    .sort({ customerId: -1 })
+    .limit(1)
+    .exec((err, result) => {
+      if (err) res.json(err);
+      res.json(result);
+    });
+});
+
 Router.get("/", (req, res, next) => {
-  Customers.find({}).exec((err, rs) => {
-    if (err) {
-      res.json(err);
-    } else {
-      res.json(rs);
-    }
-  });
+  Customers.aggregate([
+    {
+      $match: {},
+    },
+  ])
+    .sort({ customerId: 1 })
+    .exec((err, rs) => {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(rs);
+      }
+    });
 });
 
 Router.post("/add", (req, res, next) => {
@@ -22,9 +42,10 @@ Router.post("/add", (req, res, next) => {
     }
   });
 });
+
 Router.put("/update/:id", (req, res, next) => {
   const { id } = req.params;
-  Customers.findByIdAndUpdate(id, { $set: req.body }).exec((err, rs) => {
+  Customers.updateOne({ _id: id }, { $set: req.body }).exec((err, rs) => {
     if (err) {
       res.json(err);
     } else {
@@ -35,7 +56,7 @@ Router.put("/update/:id", (req, res, next) => {
 
 Router.delete("/delete/:id", (req, res, next) => {
   const { id } = req.params;
-  Customers.findByIdAndDelete(id).exec((err, rs) => {
+  Customers.deleteOne({ _id: id }).exec((err, rs) => {
     if (err) {
       res.json(err);
     } else {
