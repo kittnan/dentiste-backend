@@ -18,13 +18,19 @@ Router.get("/last", (req, res, next) => {
 });
 
 Router.get("/", (req, res, next) => {
-  Member.find({}).exec((err, rs) => {
-    if (err) {
-      res.json(err);
-    } else {
-      res.json(rs);
-    }
-  });
+  Member.aggregate([
+    {
+      $match: {},
+    },
+  ])
+    .sort({ memberId: 1 })
+    .exec((err, rs) => {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(rs);
+      }
+    });
 });
 
 Router.post("/add", (req, res, next) => {
@@ -56,7 +62,7 @@ Router.post("/login", (req, res, next) => {
 });
 Router.put("/update/:id", (req, res, next) => {
   const { id } = req.params;
-  Member.findByIdAndUpdate(id, { $set: req.body }).exec((err, rs) => {
+  Member.updateOne({ _id: id }, { $set: req.body }).exec((err, rs) => {
     if (err) {
       res.json(err);
     } else {
@@ -67,7 +73,7 @@ Router.put("/update/:id", (req, res, next) => {
 
 Router.delete("/delete/:id", (req, res, next) => {
   const { id } = req.params;
-  Member.findByIdAndDelete(id).exec((err, rs) => {
+  Member.deleteOne({ _id: id }).exec((err, rs) => {
     if (err) {
       res.json(err);
     } else {

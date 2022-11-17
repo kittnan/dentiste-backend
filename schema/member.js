@@ -5,6 +5,10 @@ const member = mongoose.Schema(
       type: String,
       required: true,
     },
+    idCard: {
+      type: String,
+      required: true,
+    },
     titleName: {
       type: String,
       required: true,
@@ -14,6 +18,10 @@ const member = mongoose.Schema(
       required: true,
     },
     lastName: {
+      type: String,
+      required: true,
+    },
+    gender: {
       type: String,
       required: true,
     },
