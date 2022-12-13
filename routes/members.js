@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-
+var mongoose = require('mongoose');
 let Member = require("../schema/member");
 
 Router.get("/last", (req, res, next) => {
@@ -18,9 +18,16 @@ Router.get("/last", (req, res, next) => {
 });
 
 Router.get("/", (req, res, next) => {
+  const { id } = req.query;
+  let con = {}
+  if(id){
+    con = {
+      _id:mongoose.Types.ObjectId(id)
+    }
+  }
   Member.aggregate([
     {
-      $match: {},
+      $match: con,
     },
   ])
     .sort({ memberId: 1 })
@@ -31,6 +38,21 @@ Router.get("/", (req, res, next) => {
         res.json(rs);
       }
     });
+});
+Router.get("/doctor", (req, res, next) => {
+  Member.aggregate([
+    {
+      $match: {
+        position: "doctor",
+      },
+    },
+  ]).exec((err, rs) => {
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(rs);
+    }
+  });
 });
 
 Router.post("/add", (req, res, next) => {

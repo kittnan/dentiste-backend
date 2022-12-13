@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-
+const ObjectID = require('mongodb').ObjectID;
 let Customers = require("../schema/customers");
 
 Router.get("/last", (req, res, next) => {
@@ -17,6 +17,26 @@ Router.get("/last", (req, res, next) => {
     });
 });
 
+Router.get("/id", (req, res, next) => {
+
+  let {id} = req.query
+  var objectId = new ObjectID(id);
+  Customers.aggregate([
+    {
+      $match: {
+        _id: objectId
+      },
+    },
+  ])
+    .sort({ customerId: 1 })
+    .exec((err, rs) => {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(rs);
+      }
+    });
+});
 Router.get("/", (req, res, next) => {
   Customers.aggregate([
     {

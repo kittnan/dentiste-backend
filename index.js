@@ -10,6 +10,7 @@ const app = express();
 const customers = require("./routes/customers");
 const members = require("./routes/members");
 const checkup = require("./routes/checkup-heal-master");
+const queue = require("./routes/queue");
 
 
 // ! connect cloud database
@@ -32,6 +33,7 @@ var router = express.Router();
 app.use("/customers", customers);
 app.use("/members", members);
 app.use("/checkup", checkup);
+app.use("/queue", queue);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`start server in port ${port}`));
