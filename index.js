@@ -11,6 +11,8 @@ const customers = require("./routes/customers");
 const members = require("./routes/members");
 const checkup = require("./routes/checkup-heal-master");
 const queue = require("./routes/queue");
+const doctor = require("./routes/doctor");
+const historyHeal = require("./routes/history-heal");
 
 
 // ! connect cloud database
@@ -34,6 +36,8 @@ app.use("/customers", customers);
 app.use("/members", members);
 app.use("/checkup", checkup);
 app.use("/queue", queue);
+app.use("/doctor", doctor);
+app.use("/historyHeal", historyHeal);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`start server in port ${port}`));

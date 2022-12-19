@@ -5,13 +5,9 @@ const ObjectID = require("mongodb").ObjectID;
 let Queue = require("../schema/queue");
 
 Router.get("/", (req, res, next) => {
-  const { id } = req.query;
-  const con = id? {
-    _id:ObjectID(id)
-  }:{}
   Queue.aggregate([
     {
-      $match: con,
+      $match: {},
     },
   ])
     .sort({ memberId: 1 })

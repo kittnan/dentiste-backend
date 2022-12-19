@@ -2,16 +2,12 @@ const express = require("express");
 const Router = express.Router();
 const moment = require("moment");
 const ObjectID = require("mongodb").ObjectID;
-let Queue = require("../schema/queue");
+let historyHeal = require("../schema/history-heal");
 
 Router.get("/", (req, res, next) => {
-  const { id } = req.query;
-  const con = id? {
-    _id:ObjectID(id)
-  }:{}
-  Queue.aggregate([
+  historyHeal.aggregate([
     {
-      $match: con,
+      $match: {},
     },
   ])
     .sort({ memberId: 1 })
@@ -39,7 +35,7 @@ Router.get("/day", (req, res, next) => {
   if (doctorId && doctorId != "null") {
     con["$match"]["doctorId"] = new ObjectID(doctorId);
   }
-  Queue.aggregate([con])
+  historyHeal.aggregate([con])
     .sort({ startDate: 1 })
     .exec((err, result) => {
       if (err) {
@@ -64,7 +60,7 @@ Router.get("/week", (req, res, next) => {
   if (doctorId && doctorId != "null") {
     con["$match"]["doctorId"] = new ObjectID(doctorId);
   }
-  Queue.aggregate([con])
+  historyHeal.aggregate([con])
     .sort({ startDate: 1 })
     .exec((err, result) => {
       if (err) {
@@ -89,7 +85,7 @@ Router.get("/month", (req, res, next) => {
   if (doctorId && doctorId != "null") {
     con["$match"]["doctorId"] = new ObjectID(doctorId);
   }
-  Queue.aggregate([con])
+  historyHeal.aggregate([con])
     .sort({ startDate: 1 })
     .exec((err, result) => {
       if (err) {
@@ -117,7 +113,7 @@ Router.get("/period", (req, res, next) => {
   if (doctorId && doctorId != "null") {
     con["$match"]["doctorId"] = new ObjectID(doctorId);
   }
-  Queue.aggregate([con])
+  historyHeal.aggregate([con])
     .sort({ startDate: 1 })
     .exec((err, result) => {
       if (err) {
@@ -130,7 +126,7 @@ Router.get("/period", (req, res, next) => {
 
 Router.post("/add", async (req, res, next) => {
   console.log(req.body);
-  const foo = await Queue.aggregate([
+  const foo = await historyHeal.aggregate([
     {
       $match: {
         doctorId: new ObjectID(req.body.doctorId),
@@ -143,7 +139,7 @@ Router.post("/add", async (req, res, next) => {
   if (foo && foo.length > 0) {
     res.json({ error: true, data: foo });
   } else {
-    Queue.insertMany(req.body, (err, rs) => {
+    historyHeal.insertMany(req.body, (err, rs) => {
       if (err) {
         res.json(err);
       } else {
@@ -155,7 +151,7 @@ Router.post("/add", async (req, res, next) => {
 
 Router.put("/update/:id", (req, res, next) => {
   const { id } = req.params;
-  Queue.updateOne({ _id: id }, { $set: req.body }).exec((err, rs) => {
+  historyHeal.updateOne({ _id: id }, { $set: req.body }).exec((err, rs) => {
     if (err) {
       res.json(err);
     } else {
@@ -166,7 +162,7 @@ Router.put("/update/:id", (req, res, next) => {
 
 Router.delete("/delete/:id", (req, res, next) => {
   const { id } = req.params;
-  Queue.deleteOne({ _id: id }).exec((err, rs) => {
+  historyHeal.deleteOne({ _id: id }).exec((err, rs) => {
     if (err) {
       res.json(err);
     } else {

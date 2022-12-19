@@ -19,29 +19,22 @@ const data = mongoose.Schema(
       type: String,
       required: true,
     },
-    startDate: {
-      type: Date,
+    healList: {
+      type: [],
       required: true,
     },
-    endDate: {
-      type: Date
-    },
-    updateBy: {
-      type: ObjectId,
+    sideList: {
+      type: [],
       required: true,
     },
-    status: {
-      type: Boolean,
-      required: true,
-      default:false
-    },
-    detail: {
+    description: {
       type: String,
       required: true,
       default:''
     },
+   
 
   },
   { timestamps: true }
 );
-module.exports = mongoose.model("queues", data);
+module.exports = mongoose.model("historyHeal", data);
