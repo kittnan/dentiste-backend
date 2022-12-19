@@ -37,7 +37,7 @@ const data = mongoose.Schema(
     },
     detail: {
       type: String,
-      required: true,
+      required: false,
       default:''
     },
 
