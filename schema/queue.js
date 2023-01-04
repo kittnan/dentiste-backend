@@ -31,9 +31,8 @@ const data = mongoose.Schema(
       required: true,
     },
     status: {
-      type: Boolean,
+      type: String,
       required: true,
-      default:false
     },
     detail: {
       type: String,

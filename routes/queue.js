@@ -175,4 +175,28 @@ Router.delete("/delete/:id", (req, res, next) => {
   });
 });
 
+Router.get("/dayCustomer", (req, res, next) => {
+  const { customerId } = req.query;
+  var startDate = moment().startOf("day").toDate();
+  var endDate = moment().endOf("day").toDate();
+  const con = {
+    $match: {
+      startDate: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      customerId: new ObjectID(customerId)
+    },
+  };
+  Queue.aggregate([con])
+    .sort({ startDate: 1 })
+    .exec((err, result) => {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(result);
+      }
+    });
+});
+
 module.exports = Router;
