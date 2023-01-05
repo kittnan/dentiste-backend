@@ -20,6 +20,23 @@ Router.get("/", (req, res, next) => {
     });
 });
 
+Router.get("/customerId", (req, res, next) => {
+  const { customerId } = req.query;
+  const con = {
+    $match: {
+      customerId: new ObjectID(customerId)
+    },
+  };
+
+  historyHeal.aggregate([con])
+    .exec((err, result) => {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(result);
+      }
+    });
+});
 Router.get("/day", (req, res, next) => {
   const { doctorId } = req.query;
   var startDate = moment().startOf("day").toDate();

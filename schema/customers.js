@@ -52,10 +52,10 @@ const customer = mongoose.Schema(
       type: String,
       required: true,
     },
-    nextMeet: {
-      status:Boolean,
-      date:Date
-    },
+    // nextMeet: {
+    //   status:Boolean,
+    //   date:Date
+    // },
     tokenLine: {
       type: String,
     },

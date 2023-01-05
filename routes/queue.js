@@ -130,19 +130,19 @@ Router.get("/period", (req, res, next) => {
 
 Router.post("/add", async (req, res, next) => {
   console.log(req.body);
-  const foo = await Queue.aggregate([
-    {
-      $match: {
-        doctorId: new ObjectID(req.body.doctorId),
-        startDate: {
-          $eq: new Date(req.body.startDate),
-        },
-      },
-    },
-  ]);
-  if (foo && foo.length > 0) {
-    res.json({ error: true, data: foo });
-  } else {
+  // const foo = await Queue.aggregate([
+  //   {
+  //     $match: {
+  //       doctorId: new ObjectID(req.body.doctorId),
+  //       startDate: {
+  //         $eq: new Date(req.body.startDate),
+  //       },
+  //     },
+  //   },
+  // ]);
+  // if (foo && foo.length > 0) {
+  //   res.json({ error: true, data: foo });
+  // } else {
     Queue.insertMany(req.body, (err, rs) => {
       if (err) {
         res.json(err);
@@ -150,7 +150,7 @@ Router.post("/add", async (req, res, next) => {
         res.json(rs);
       }
     });
-  }
+  // }
 });
 
 Router.put("/update/:id", (req, res, next) => {
@@ -175,17 +175,18 @@ Router.delete("/delete/:id", (req, res, next) => {
   });
 });
 
-Router.get("/dayCustomer", (req, res, next) => {
+Router.get("/dayUpCustomer", (req, res, next) => {
   const { customerId } = req.query;
   var startDate = moment().startOf("day").toDate();
-  var endDate = moment().endOf("day").toDate();
   const con = {
     $match: {
       startDate: {
         $gte: new Date(startDate),
-        $lte: new Date(endDate),
       },
-      customerId: new ObjectID(customerId)
+      customerId: new ObjectID(customerId),
+      status: {
+        $ne: 'next'
+      }
     },
   };
   Queue.aggregate([con])
