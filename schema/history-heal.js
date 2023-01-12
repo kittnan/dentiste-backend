@@ -29,7 +29,6 @@ const data = mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
       default:''
     },
    
