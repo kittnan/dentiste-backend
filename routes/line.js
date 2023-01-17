@@ -51,9 +51,9 @@ async function handleEvent(event) {
             const data = await Customers.aggregate([{
                     $match: {
                         idCard: event.message.text,
-                        startDate: {
-                            $gte: new Date()
-                        }
+                        // startDate:{
+                        //   $gte: new Date()
+                        // }
                     },
                 },
                 {
@@ -65,9 +65,9 @@ async function handleEvent(event) {
                     },
                 },
             ]);
-            if (data && data[0].queues.length > 0) {
-                const len = data[0].queues.length - 1;
-                const queue = data[0].queues[len];
+            if (data && data[0] ? .queues ? .length > 0) {
+                const len = data[0] ? .queues ? .length - 1;
+                const queue = data[0] ? .queues[len];
                 const date = moment(queue.startDate)
                     .locale("th")
                     .format("d MMM YYYY, HH:mm")
