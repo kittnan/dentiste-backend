@@ -67,8 +67,11 @@ async function handleEvent(event) {
         },
       ]);
       if (data && data[0]?.queues?.length > 0) {
-        const len = data[0]?.queues?.length - 1;
-        const queue = data[0]?.queues[len];
+        const queueFilter = data[0]?.queues.filter(
+          (q) => new Date(q.startDate) >= new Date()
+        );
+        const len = queueFilter.length - 1;
+        const queue = queueFilter[len];
         const date = moment(queue.startDate)
           .locale("th")
           .format("d MMM YYYY, HH:mm")
