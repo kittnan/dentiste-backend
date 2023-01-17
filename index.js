@@ -13,7 +13,7 @@ const checkup = require("./routes/checkup-heal-master");
 const queue = require("./routes/queue");
 const doctor = require("./routes/doctor");
 const historyHeal = require("./routes/history-heal");
-
+const line = require("./routes/line");
 
 // ! connect cloud database
 mongoose
@@ -30,7 +30,6 @@ app.use(cors());
 app.use(morgan("dev"));
 var router = express.Router();
 
-
 // ! route
 app.use("/customers", customers);
 app.use("/members", members);
@@ -38,6 +37,7 @@ app.use("/checkup", checkup);
 app.use("/queue", queue);
 app.use("/doctor", doctor);
 app.use("/historyHeal", historyHeal);
+app.use("/line", line);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`start server in port ${port}`));
