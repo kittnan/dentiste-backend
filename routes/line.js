@@ -7,12 +7,80 @@ const config = {
     channelAccessToken: process.env.channelAccessToken,
     channelSecret: process.env.channelSecret,
 };
+const Blob = require("buffer");
+
+var QRCode = require('qrcode')
+const axios = require('axios').default;
+var fs = require('fs');
+var FormData = require('form-data');
 
 let Member = require("../schema/member");
 let Customers = require("../schema/customers");
 let Queue = require("../schema/queue");
 
 const client = new line.Client(config);
+
+Router.get("/send", (req, res, next) => {
+    var data = JSON.stringify({
+        "to": "U7114fcc26a0c4c4e27e1f4f7bd70e814",
+        "messages": [{
+            "type": "text",
+            "text": "ทักไปแล้วน๊า"
+        }, ]
+    });
+
+    var config = {
+        method: 'post',
+        url: 'https://api.line.me/v2/bot/message/push',
+        headers: {
+            'Authorization': 'Bearer kMlpnWTHetSTngKWE7NlAL28iNaAvv/Z6Qx/W58QE3smWyQDsecMpS1w6id+3akW1aNpsnV8Hy6YQtcXg0ipths+byz7nZ5NUd7QekO5T6GrU407wm9kMlCMZpTbV9z4SeQVCovCd9O1gYeV24sQSQdB04t89/1O/w1cDnyilFU=',
+            'Content-Type': 'application/json'
+        },
+        data: data
+    };
+
+    axios(config)
+        .then(function(response) {
+            console.log(JSON.stringify(response.data));
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+});
+
+
+async function genQr() {
+    const fileName = (new Date().getTime()) + '.jpg'
+    await QRCode.toFile(fileName, 'text...')
+    var data = new FormData();
+    data.append('file', fs.createReadStream(fileName));
+    data.append('allowedDownloads', '0');
+    data.append('expiryDays', '0');
+
+    var config = {
+        method: 'post',
+        url: 'https://project.sodacanhomelab.uk/api/files/add',
+        headers: {
+            'apikey': 'z6ZOdIAeE5csnBTz0VoBvhzQJelHIc',
+            ...data.getHeaders()
+        },
+        data: data
+    };
+
+    const res = await axios(config)
+    if (res) {
+        fs.unlink(fileName, (err) => {
+            if (err) console.log(err)
+        })
+        const url = res.data.HotlinkUrl + res.data.FileInfo.HotlinkId
+        return url
+    } else {
+        return ''
+    }
+
+}
+
+
 
 // webhook callback
 Router.post("/webhook", (req, res) => {
@@ -65,8 +133,9 @@ async function handleEvent(event) {
                     },
                 },
             ]);
-            console.log(data[0].queues);
+            // console.log(data[0].queues);
             if (data && data[0].queues.length > 0) {
+                const url = await genQr()
                 const queueFilter = data[0].queues.filter((q) => {
                     if (new Date(q.startDate).getTime() >= new Date().getTime())
                         return true;
@@ -78,17 +147,6 @@ async function handleEvent(event) {
                     .locale("th")
                     .format("Do MMM YYYY, HH:mm")
                     .toString();
-
-                // var fs = require("fs");
-                // var mime = "image/jpg";
-                // var encoding = "base64";
-                // var d = fs
-                //   .readFileSync(
-                //     "D:/ProjectClinic/github-mos/dentiste-backend/linerichmenu_8.jpg"
-                //   )
-                //   .toString(encoding);
-                // var uri = "data:" + mime + ";" + encoding + "," + d;
-
                 return client.replyMessage(event.replyToken, [{
                         type: "text",
                         text: `คนไข้: ${queue.customerName}\nหมอ: ${queue.doctorName}\nวันเวลา: ${date}`,
@@ -101,8 +159,8 @@ async function handleEvent(event) {
                     },
                     {
                         type: "image",
-                        originalContentUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/QR_deWP.svg/1200px-QR_deWP.svg.png",
-                        previewImageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/QR_deWP.svg/1200px-QR_deWP.svg.png",
+                        originalContentUrl: url,
+                        previewImageUrl: url,
                     },
                 ]);
             } else {

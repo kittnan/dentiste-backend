@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const app = express();
+const fileUpload = require('express-fileupload');
 
 // ! routes
 const customers = require("./routes/customers");
@@ -15,19 +16,23 @@ const doctor = require("./routes/doctor");
 const historyHeal = require("./routes/history-heal");
 const line = require("./routes/line");
 
+
 // ! connect cloud database
 mongoose
-  .connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: false,
-  })
-  .then(() => console.log("database connected"))
-  .catch((err) => console.log(err));
+    .connect(process.env.DATABASE, {
+        useNewUrlParser: true,
+        useUnifiedTopology: false,
+    })
+    .then(() => console.log("database connected"))
+    .catch((err) => console.log(err));
 
 // ! middle ware
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+app.use(fileUpload({
+    createParentPath: true
+}));
 var router = express.Router();
 
 // ! route
