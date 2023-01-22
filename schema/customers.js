@@ -37,7 +37,7 @@ const customer = mongoose.Schema(
       type: String,
     },
     xrayImage: {
-      type: [String],
+      type: [],
     },
     congenitalDisease: {
       type: String,

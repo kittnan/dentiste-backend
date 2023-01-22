@@ -6,9 +6,11 @@ let Queue = require("../schema/queue");
 
 Router.get("/", (req, res, next) => {
   const { id } = req.query;
-  const con = id? {
-    _id:ObjectID(id)
-  }:{}
+  const con = id
+    ? {
+        _id: ObjectID(id),
+      }
+    : {};
   Queue.aggregate([
     {
       $match: con,
@@ -40,7 +42,7 @@ Router.get("/day", (req, res, next) => {
     con["$match"]["doctorId"] = new ObjectID(doctorId);
   }
   Queue.aggregate([con])
-    .sort({ startDate: 1 })
+    // .sort({ startDate: 1 })
     .exec((err, result) => {
       if (err) {
         res.json(err);
@@ -51,7 +53,7 @@ Router.get("/day", (req, res, next) => {
 });
 Router.get("/week", (req, res, next) => {
   const { doctorId } = req.query;
-  var startDate = moment().startOf("week").add(1, "day").toDate();
+  var startDate = moment().startOf("week").toDate();
   var endDate = moment().endOf("week").add(1, "day").toDate();
   const con = {
     $match: {
@@ -77,7 +79,7 @@ Router.get("/week", (req, res, next) => {
 Router.get("/month", (req, res, next) => {
   const { doctorId } = req.query;
   var startDate = moment().startOf("month").toDate();
-  var endDate = moment().endOf("month").toDate();
+  var endDate = moment().endOf("month").add(1, "day").toDate();
   const con = {
     $match: {
       startDate: {
@@ -143,13 +145,13 @@ Router.post("/add", async (req, res, next) => {
   // if (foo && foo.length > 0) {
   //   res.json({ error: true, data: foo });
   // } else {
-    Queue.insertMany(req.body, (err, rs) => {
-      if (err) {
-        res.json(err);
-      } else {
-        res.json(rs);
-      }
-    });
+  Queue.insertMany(req.body, (err, rs) => {
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(rs);
+    }
+  });
   // }
 });
 
@@ -185,8 +187,8 @@ Router.get("/dayUpCustomer", (req, res, next) => {
       },
       customerId: new ObjectID(customerId),
       status: {
-        $ne: 'next'
-      }
+        $ne: "next",
+      },
     },
   };
   Queue.aggregate([con])
