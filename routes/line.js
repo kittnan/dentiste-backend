@@ -237,6 +237,7 @@ async function handleEvent(event) {
           });
         }
       } else {
+        console.log(data);
         const update = await Customers.updateOne(
           { _id: data[0]._id },
           { $set: { tokenLine: event.source.userId }, ...data[0] }
