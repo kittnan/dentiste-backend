@@ -30,7 +30,7 @@ Router.post("/sendQR", async(req, res, next) => {
     }, ]);
 
     if (!!customer) {
-        if (customer[0].tokenLine) {
+        if (customer[0] ? .tokenLine) {
             const qrCodeUrl = await genQr(`${process.env.PATHWEB}?id=${queue._id}`);
             const resSendLine = await sendLine(queue.tokenLine, queue, qrCodeUrl);
             console.log(resSendLine);
@@ -173,9 +173,9 @@ async function handleEvent(event) {
             const data = await Customers.aggregate([{
                     $match: {
                         idCard: idCard,
-                        // startDate: {
-                        //   $gte: new Date(),
-                        // },
+                        startDate: {
+                            $gte: new Date(),
+                        },
                     },
                 },
                 {
@@ -188,7 +188,7 @@ async function handleEvent(event) {
                 },
             ]);
             // console.log(data[0].queues);
-            if (data && data[0].tokenLine) {
+            if (data && data[0] ? .tokenLine) {
                 if (data && data[0].queues.length > 0) {
                     const url = await genQr(
                         `${process.env.PATHWEB}?id=${data[0].queues._id}`
