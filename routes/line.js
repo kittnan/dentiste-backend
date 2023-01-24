@@ -32,7 +32,7 @@ Router.post("/sendQR", async (req, res, next) => {
   ]);
 
   if (!!customer) {
-    if (customer[0]?.tokenLine) {
+    if (customer[0].tokenLine) {
       const qrCodeUrl = await genQr(`${process.env.PATHWEB}?id=${queue._id}`);
       const resSendLine = await sendLine(queue.tokenLine, queue, qrCodeUrl);
       console.log(resSendLine);
@@ -181,9 +181,6 @@ async function handleEvent(event) {
         {
           $match: {
             idCard: idCard,
-            startDate: {
-              $gte: new Date(),
-            },
           },
         },
         {
@@ -194,9 +191,16 @@ async function handleEvent(event) {
             as: "queues",
           },
         },
+        {
+          $match: {
+            "queues.startDate": {
+              $gte: new Date(),
+            },
+          },
+        },
       ]);
       // console.log(data[0].queues);
-      if (data && data[0]?.tokenLine) {
+      if (data && data[0].tokenLine) {
         if (data && data[0].queues.length > 0) {
           const url = await genQr(
             `${process.env.PATHWEB}?id=${data[0].queues._id}`
@@ -244,7 +248,7 @@ async function handleEvent(event) {
         );
         if (data && data[0].queues.length > 0) {
           const url = await genQr(
-            `${process.env.PATHWEB}?id=${data[0].queues._id}`
+            `${process.env.PATHWEB}?id=${data[0].queues[0]._id}`
           );
           const queueFilter = data[0].queues.filter((q) => {
             if (new Date(q.startDate).getTime() >= new Date().getTime())
