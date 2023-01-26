@@ -16,6 +16,7 @@ const doctor = require("./routes/doctor");
 const historyHeal = require("./routes/history-heal");
 const line = require("./routes/line");
 const files = require("./routes/files");
+const static = require("./routes/static");
 
 // ! connect cloud database
 mongoose
@@ -46,6 +47,7 @@ app.use("/doctor", doctor);
 app.use("/historyHeal", historyHeal);
 app.use("/line", line);
 app.use("/files", files);
+app.use("/static", static);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`start server in port ${port}`));
