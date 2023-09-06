@@ -6,7 +6,16 @@ let Queues = require("../schema/queue");
 Router.get("/", async (req, res, next) => {
   let arr = [];
 
-  const total = await Queues.aggregate([{ $match: {} }, { $count: "count" }]);
+  const total = await Queues.aggregate([
+    {
+      $match: {
+        status: {
+          $nin: ["waitConfirm", "waitDoctor"],
+        },
+      },
+    },
+    { $count: "count" },
+  ]);
   const healed = await Queues.aggregate([
     {
       $match: {
@@ -70,13 +79,13 @@ Router.get("/", async (req, res, next) => {
   arr = [
     {
       name: "total",
-      value: "ทั้งหมด",
+      value: "จำนวนครั้งที่เคยใช้บริการ",
       count: total[0].count,
       percent: 1,
     },
     {
       name: "healed",
-      value: "มาตามนัด",
+      value: "รักษาสำเร็จ",
       count: healed[0].count,
       percent: healed[0].count / total[0].count,
     },
@@ -98,18 +107,18 @@ Router.get("/", async (req, res, next) => {
       count: nextMeet[0].count,
       percent: nextMeet[0].count / total[0].count,
     },
-    {
-      name: "waitConfirm",
-      value: "รอยืนยันคิว",
-      count: waitConfirm[0].count,
-      percent: waitConfirm[0].count / total[0].count,
-    },
-    {
-      name: "waitDoctor",
-      value: "รอตรวจ",
-      count: waitDoctor[0].count,
-      percent: waitDoctor[0].count / total[0].count,
-    },
+    // {
+    //   name: "waitConfirm",
+    //   value: "รอยืนยันคิว",
+    //   count: waitConfirm[0].count,
+    //   percent: waitConfirm[0].count / total[0].count,
+    // },
+    // {
+    //   name: "waitDoctor",
+    //   value: "รอตรวจ",
+    //   count: waitDoctor[0].count,
+    //   percent: waitDoctor[0].count / total[0].count,
+    // },
   ];
   res.json(arr);
 });
