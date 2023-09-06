@@ -25,7 +25,7 @@ autoRunAt8();
 autoRun4Hr()
     // ! function รันตอน 8 โมง เช้าของทุกวัน
 async function autoRunAt8() {
-    // const job = cron.schedule('0 56 22 * * *', async function() {
+    // const job = cron.schedule('0 10 22 * * *', async function() {
     const job = cron.schedule('0 0 8 * * *', async function() {
         console.log("cron.schedule");
 
@@ -75,7 +75,7 @@ async function autoRunAt8() {
 
 // ! function รัน ทุกๆ 12.00 16.00 20.00
 async function autoRun4Hr() {
-    // const job = cron.schedule('*/10 * * * * *', async function() {
+    // const job = cron.schedule('*/15 * * * * *', async function() {
     const job = cron.schedule('0 0 12,16,20 * * *', async function() {
         console.log("cron.autoRun4Hr");
         const mo = moment().startOf('day').toISOString()
@@ -320,14 +320,18 @@ async function handleEvent(event) {
                         "queues.startDate": {
                             $gte: new Date(),
                         },
+
                     },
                 },
-            ]);
-
+            ]).sort({
+                "queues.startDate": -1
+            })
+            console.log(queues);
             if (queues && queues.length > 0 && queues[0].tokenLine) {
                 if (queues && queues[0].queues.length > 0) {
+                    let currentQueue = queues[0].queues[queues[0].queues.length - 1]
                     const url = await genQr(
-                        `${process.env.PATHWEB}?id=${queues[0].queues._id}`
+                        `${process.env.PATHWEB}?id=${currentQueue._id}`
                     );
                     const queueFilter = queues[0].queues.filter((q) => {
                         if (new Date(q.startDate).getTime() >= new Date().getTime())
