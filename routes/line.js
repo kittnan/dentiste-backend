@@ -73,6 +73,8 @@ async function autoRunAt8() {
     });
 }
 
+
+
 // ! function รัน ทุกๆ 12.00 16.00 20.00
 async function autoRun4Hr() {
     // const job = cron.schedule('*/15 * * * * *', async function() {
